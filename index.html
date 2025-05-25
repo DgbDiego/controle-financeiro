@@ -2,135 +2,214 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Controle Financeiro</title>
+    <title>GRANA - Controle Financeiro</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
+        :root {
+            --main-color: #264653;
+            --accent-color: #2a9d8f;
+            --bg-color: #f8f9fa;
+        }
+
         body {
-            background-color: #f4f4f4;
+            background-color: var(--bg-color);
         }
+
         header {
-            background: #0077cc;
+            background: var(--main-color);
             color: white;
-            padding: 15px;
+            padding: 20px;
             text-align: center;
+            border-bottom: 4px solid var(--accent-color);
         }
+
         nav button.active {
-            background-color: #0077cc !important;
+            background-color: var(--main-color) !important;
             color: white !important;
         }
+
         .resultado {
             background: white;
-            padding: 15px;
-            border-radius: 8px;
+            padding: 20px;
+            border-radius: 12px;
             margin-top: 20px;
-            max-height: 400px;
-            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
+
         table th {
-            background-color: #0077cc;
+            background-color: var(--main-color);
             color: white;
+            text-align: center;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .nav {
+            border-bottom: 2px solid #e0e0e0;
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Controle Financeiro</h1>
+    <h1><i class="bi bi-cash-coin"></i> GRANA - Controle Financeiro</h1>
 </header>
 
 <!-- Menu -->
-<nav class="nav justify-content-center bg-light py-2">
-    <button class="btn btn-outline-primary me-2 active" onclick="showTab('compra')">Registrar Compra</button>
-    <button class="btn btn-outline-primary me-2" onclick="showTab('entrada')">Registrar Entrada</button>
-    <button class="btn btn-outline-primary" onclick="showTab('resumo')">Resumo</button>
+<nav class="nav justify-content-center bg-white py-2">
+    <button class="btn btn-outline-success me-2 active" onclick="showTab('compra')">
+        <i class="bi bi-cart-plus"></i> Registrar Compra
+    </button>
+    <button class="btn btn-outline-success me-2" onclick="showTab('entrada')">
+        <i class="bi bi-wallet2"></i> Registrar Entrada
+    </button>
+    <button class="btn btn-outline-success" onclick="showTab('resumo')">
+        <i class="bi bi-bar-chart-line"></i> Resumo
+    </button>
 </nav>
 
 <div class="container my-4">
 
     <!-- Registrar Compra -->
-    <section id="compra" class="active">
-        <h2>Registrar Compra</h2>
-        <div class="row g-2">
+    <section id="compra">
+        <h2><i class="bi bi-cart-plus"></i> Registrar Compra</h2>
+        <div class="row g-3">
             <div class="col-md-4">
-                <input id="compraPessoa" class="form-control" placeholder="Pessoa">
+                <label class="form-label">Pessoa</label>
+                <input id="compraPessoa" class="form-control" placeholder="Ex.: João">
             </div>
             <div class="col-md-4">
-                <input id="compraDescricao" class="form-control" placeholder="Descrição">
+                <label class="form-label">Descrição</label>
+                <input id="compraDescricao" class="form-control" placeholder="Ex.: Mercado">
             </div>
             <div class="col-md-4">
-                <input id="compraValor" class="form-control" placeholder="Valor" type="number">
+                <label class="form-label">Valor (R$)</label>
+                <input id="compraValor" class="form-control" type="number" step="0.01">
             </div>
             <div class="col-md-4">
+                <label class="form-label">Data da Compra</label>
                 <input id="compraData" class="form-control" type="date">
             </div>
             <div class="col-md-4">
+                <label class="form-label">Forma de Pagamento</label>
                 <select id="compraFormaPgto" class="form-select">
                     <option value="C">Crédito</option>
                     <option value="D">Débito</option>
                 </select>
             </div>
             <div class="col-md-4">
-                <input id="compraParcelas" class="form-control" placeholder="Parcelas" type="number" value="1">
+                <label class="form-label">Parcelas</label>
+                <input id="compraParcelas" class="form-control" type="number" value="1">
             </div>
             <div class="col-md-4">
-                <input id="compraFonte" class="form-control" placeholder="Fonte (ex.: Salário)">
+                <label class="form-label">Fonte (Ex.: Salário)</label>
+                <input id="compraFonte" class="form-control">
             </div>
         </div>
-        <button class="btn btn-primary mt-3" onclick="registrarCompra()">Registrar</button>
+        <button class="btn btn-success mt-3" onclick="registrarCompra()">
+            <i class="bi bi-check-circle"></i> Registrar
+        </button>
         <div class="resultado" id="resultadoCompra"></div>
     </section>
 
     <!-- Registrar Entrada -->
-    <section id="entrada" style="display: none;">
-        <h2>Registrar Entrada (Salário)</h2>
-        <div class="row g-2">
-            <div class="col-md-4">
-                <input id="entradaPessoa" class="form-control" placeholder="Pessoa">
-            </div>
-            <div class="col-md-4">
-                <input id="entradaValorHora" class="form-control" placeholder="Valor Hora" type="number">
-            </div>
-            <div class="col-md-4">
-                <input id="entradaHorasUteis" class="form-control" placeholder="Horas Úteis no Mês" type="number">
-            </div>
-            <div class="col-md-4">
-                <input id="entradaMesAno" class="form-control" placeholder="Mês/Ano (MM/yyyy)">
-            </div>
-        </div>
-        <button class="btn btn-primary mt-3" onclick="registrarEntrada()">Registrar Entrada</button>
-        <div class="resultado" id="resultadoEntrada"></div>
-    </section>
+	<section id="entrada" style="display: none;">
+		<h2><i class="bi bi-wallet2"></i> Registrar Entrada</h2>
+		<div class="row g-3">
+			<div class="col-md-4">
+				<label class="form-label">Tipo de Entrada</label>
+				<select id="entradaTipo" class="form-select" onchange="atualizarCamposEntrada()">
+					<option value="Salario">Salário</option>
+					<option value="Extra">Extra</option>
+				</select>
+			</div>
+			<div class="col-md-4">
+				<label class="form-label">Pessoa</label>
+				<input id="entradaPessoa" class="form-control">
+			</div>
+			<div class="col-md-4">
+				<label class="form-label">Valor Hora (R$)</label>
+				<input id="entradaValorHora" class="form-control" type="number" step="0.01">
+			</div>
+			<div class="col-md-4">
+				<label class="form-label">Horas Úteis no Mês</label>
+				<input id="entradaHorasUteis" class="form-control" type="number">
+			</div>
+			<div class="col-md-4">
+				<label class="form-label">Horas Extras</label>
+				<input id="entradaHorasExtras" class="form-control" type="number" disabled>
+			</div>
+			<div class="col-md-4">
+				<label class="form-label">Mês/Ano (MM/yyyy)</label>
+				<input id="entradaMesAno" class="form-control" placeholder="Ex.: 05/2025">
+			</div>
+		</div>
+		<button class="btn btn-success mt-3" onclick="registrarEntrada()">
+			<i class="bi bi-check-circle"></i> Registrar Entrada
+		</button>
+		<div class="resultado" id="resultadoEntrada"></div>
+	</section>
+
 
     <!-- Resumo -->
     <section id="resumo" style="display: none;">
-        <h2>Resumo por Pessoa e Período</h2>
-        <div class="row g-2">
+        <h2><i class="bi bi-bar-chart-line"></i> Resumo por Pessoa e Período</h2>
+        <div class="row g-3">
             <div class="col-md-4">
-                <input id="resumoPessoa" class="form-control" placeholder="Pessoa">
+                <label class="form-label">Pessoa</label>
+                <input id="resumoPessoa" class="form-control">
             </div>
             <div class="col-md-4">
+                <label class="form-label">Período Início</label>
                 <input id="resumoDataInicio" class="form-control" type="date">
             </div>
             <div class="col-md-4">
+                <label class="form-label">Período Fim</label>
                 <input id="resumoDataFim" class="form-control" type="date">
             </div>
         </div>
-        <button class="btn btn-primary mt-3" onclick="buscarResumo()">Buscar Resumo</button>
+        <button class="btn btn-success mt-3" onclick="buscarResumo()">
+            <i class="bi bi-search"></i> Buscar Resumo
+        </button>
         <div class="resultado" id="resumoResultado"></div>
     </section>
 
 </div>
+
+<!-- Toast de Notificação -->
+<div class="toast-container" id="toastContainer"></div>
 
 <!-- Modal de Carregando -->
 <div class="modal fade" id="modalLoading" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content bg-light text-center">
       <div class="modal-body">
-        <div class="spinner-border text-primary" role="status">
+        <div class="spinner-border text-success" role="status">
           <span class="visually-hidden">Carregando...</span>
         </div>
         <p class="mt-3">Aguarde, processando...</p>
@@ -159,6 +238,23 @@
         return modal;
     }
 
+    function showToast(message) {
+        const container = document.getElementById('toastContainer');
+        const toastId = 'toast' + Date.now();
+        const toast = document.createElement('div');
+        toast.className = 'toast align-items-center text-white bg-success border-0 show';
+        toast.id = toastId;
+        toast.role = 'alert';
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">${message}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="document.getElementById('${toastId}').remove()"></button>
+            </div>
+        `;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 5000);
+    }
+
     async function registrarCompra() {
         const payload = {
             pessoa: document.getElementById('compraPessoa').value,
@@ -183,130 +279,219 @@
 
             if (!res.ok) {
                 const erro = await res.text();
-                alert("Erro ao registrar compra: " + erro);
+                showToast("Erro: " + erro);
                 return;
             }
 
             const resultado = await res.json();
-            alert(`Sua compra foi registrada, com ID ${resultado.id}`);
+            showToast(`Compra registrada! ID: ${resultado.id}`);
 
             document.getElementById('resultadoCompra').innerText = JSON.stringify(resultado, null, 2);
 
-            document.getElementById('compraPessoa').value = '';
-            document.getElementById('compraDescricao').value = '';
-            document.getElementById('compraValor').value = '';
-            document.getElementById('compraData').value = '';
+            // Limpar campos
+            ['compraPessoa','compraDescricao','compraValor','compraData','compraFonte']
+                .forEach(id => document.getElementById(id).value = '');
             document.getElementById('compraFormaPgto').value = 'C';
             document.getElementById('compraParcelas').value = '1';
-            document.getElementById('compraFonte').value = '';
 
         } catch (error) {
             modal.hide();
-            alert("Erro ao conectar na API: " + error.message);
+            showToast("Erro: " + error.message);
         }
     }
 
     async function registrarEntrada() {
-        const payload = {
-            pessoa: document.getElementById('entradaPessoa').value,
-            valorHora: parseFloat(document.getElementById('entradaValorHora').value),
-            horasUteisMes: parseInt(document.getElementById('entradaHorasUteis').value),
-            mesAno: document.getElementById('entradaMesAno').value
-        };
+    const tipo = document.getElementById('entradaTipo').value;
+    const pessoa = document.getElementById('entradaPessoa').value.trim();
+    const mesAno = document.getElementById('entradaMesAno').value.trim();
 
-        const modal = showLoading();
-
-        try {
-            const res = await fetch(`${apiBase}/RegistrarEntrada`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            const text = await res.text();
-            document.getElementById('resultadoEntrada').innerText = text;
-            modal.hide();
-
-        } catch (error) {
-            modal.hide();
-            alert("Erro ao conectar na API: " + error.message);
-        }
+    if (!pessoa) {
+        showToast("Pessoa é obrigatória.");
+        return;
     }
 
-    async function buscarResumo() {
-        const pessoa = document.getElementById('resumoPessoa').value;
-        const dataInicio = document.getElementById('resumoDataInicio').value;
-        const dataFim = document.getElementById('resumoDataFim').value;
+    if (!mesAno) {
+        showToast("Mês/Ano é obrigatório.");
+        return;
+    }
 
-        const modal = showLoading();
+    let payload = {
+        tipoEntrada: tipo,
+        pessoa: pessoa,
+        mesAno: mesAno
+    };
 
-        try {
-            const res = await fetch(`${apiBase}/ResumoPessoaPeriodo?pessoa=${pessoa}&dataInicio=${dataInicio}&dataFim=${dataFim}`);
+    if (tipo === 'Extra') {
+        const horasExtras = parseFloat(document.getElementById('entradaHorasExtras').value);
 
-            if (!res.ok) {
-                const erro = await res.text();
-                modal.hide();
-                alert("Erro ao buscar resumo: " + erro);
-                return;
-            }
+        if (isNaN(horasExtras) || horasExtras <= 0) {
+            showToast("Informe as Horas Extras.");
+            return;
+        }
 
-            const resultado = await res.json();
+        payload.horasExtras = horasExtras;
+
+    } else {
+        const valorHora = parseFloat(document.getElementById('entradaValorHora').value);
+        const horasUteisMes = parseInt(document.getElementById('entradaHorasUteis').value);
+
+        if (isNaN(valorHora) || valorHora <= 0) {
+            showToast("Informe o Valor Hora.");
+            return;
+        }
+        if (isNaN(horasUteisMes) || horasUteisMes <= 0) {
+            showToast("Informe as Horas Úteis no Mês.");
+            return;
+        }
+
+        payload.valorHora = valorHora;
+        payload.horasUteisMes = horasUteisMes;
+    }
+
+    const modal = showLoading();
+
+    try {
+        const res = await fetch(`${apiBase}/RegistrarEntrada`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const text = await res.text();
+		const resultado = JSON.parse(text);
+
+		const textoFormatado = `
+		${resultado.message}
+
+		Valor da Hora Extra: R$ ${resultado.valorHoraExtra.toFixed(2).replace('.', ',')}
+		Horas Extras: ${resultado.horasExtras}
+		Valor Extra Calculado: R$ ${resultado.valorExtraCalculado.toFixed(2).replace('.', ',')}
+		Total de Extras: R$ ${resultado.novosExtras.toFixed(2).replace('.', ',')}
+		`;
+
+		document.getElementById('resultadoEntrada').innerText = textoFormatado.trim();
+        modal.hide();
+        showToast("Entrada registrada!");
+
+        // Limpar campos
+        ['entradaPessoa', 'entradaValorHora', 'entradaHorasUteis', 'entradaMesAno', 'entradaHorasExtras']
+            .forEach(id => document.getElementById(id).value = '');
+        document.getElementById('entradaTipo').value = 'Salario';
+        atualizarCamposEntrada();
+
+    } catch (error) {
+        modal.hide();
+        showToast("Erro: " + error.message);
+    }
+}
+
+
+  async function buscarResumo() {
+    const pessoa = document.getElementById('resumoPessoa').value;
+    const dataInicio = document.getElementById('resumoDataInicio').value;
+    const dataFim = document.getElementById('resumoDataFim').value;
+
+    const modal = showLoading();
+
+    try {
+        const res = await fetch(`${apiBase}/ResumoPessoaPeriodo?pessoa=${pessoa}&dataInicio=${dataInicio}&dataFim=${dataFim}`);
+
+        if (!res.ok) {
+            const erro = await res.text();
             modal.hide();
+            showToast("Erro: " + erro);
+            return;
+        }
 
-            let html = `
-                <h4>Resumo de ${resultado.pessoa}</h4>
-                <p><strong>Período:</strong> ${resultado.periodo}</p>
-                <p><strong>Salário:</strong> R$ ${resultado.salario.toLocaleString('pt-BR')}</p>
-                <p><strong>Total Gasto:</strong> R$ ${resultado.totalGasto.toLocaleString('pt-BR')}</p>
-                <p><strong>Saldo Restante:</strong> R$ ${resultado.saldoRestante.toLocaleString('pt-BR')}</p>
+        const resultado = await res.json();
+        modal.hide();
+
+        const totalComExtras = resultado.salario + (resultado.extras || 0);
+        const saldo = resultado.saldoRestante;
+
+        // Verifica se saldo está abaixo de 20%
+        const saldoEstilo = saldo < 0.2 * totalComExtras ? "color: red; font-weight: bold;" : "";
+
+        let html = `
+            <h4 class="mb-3">Resumo de <strong>${resultado.pessoa}</strong></h4>
+            <div class="row mb-3">
+                <div class="col"><strong>Período:</strong> ${resultado.periodo}</div>
+                <div class="col"><strong>Salário:</strong> R$ ${resultado.salario.toLocaleString('pt-BR')}</div>
+                <div class="col"><strong>Extras:</strong> R$ ${(resultado.extras || 0).toLocaleString('pt-BR')}</div>
+                <div class="col"><strong>Total Gasto:</strong> R$ ${resultado.totalGasto.toLocaleString('pt-BR')}</div>
+                <div class="col"><strong>Saldo:</strong> <span style="${saldoEstilo}">R$ ${saldo.toLocaleString('pt-BR')}</span></div>
+            </div>
+        `;
+
+        if (resultado.compras.length > 0) {
+            html += `
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered align-middle">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Compra</th>
+                                <th>Valor</th>
+                                <th>Forma Pgto</th>
+                                <th>Parcela</th>
+                                <th>Fonte</th>
+                                <th>Data</th>
+                                <th>Mês/Ano</th>
+                            </tr>
+                        </thead>
+                        <tbody>
             `;
 
-            if (resultado.compras.length > 0) {
-                html += `
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-sm">
-                            <thead>
-                                <tr>
-                                    <th>IdLan</th>
-                                    <th>Compra</th>
-                                    <th>Valor</th>
-                                    <th>Forma Pgto</th>
-                                    <th>Parcela</th>
-                                    <th>Fonte</th>
-                                    <th>Data</th>
-                                    <th>Mes/Ano</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                `;
+		resultado.compras.forEach(c => {
+			const valorFormatado = parseFloat(
+				c.Valor.toString().replace(/\./g, '').replace(',', '.')
+			).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-                resultado.compras.forEach(c => {
-                    html += `
-                        <tr>
-                            <td>${c.IdLan}</td>
-                            <td>${c.Compra}</td>
-                            <td>R$ ${c.Valor}</td>
-                            <td>${c.FormaPgto}</td>
-                            <td>${c.Parcela}</td>
-                            <td>${c.Fonte}</td>
-                            <td>${new Date(c.Data).toLocaleDateString('pt-BR')}</td>
-                            <td>${c.MesAno}</td>
-                        </tr>
-                    `;
-                });
+			html += `
+				<tr>
+					<td>${c.IdLan}</td>
+					<td>${c.Compra}</td>
+					<td>R$ ${valorFormatado}</td>
+					<td>${c.FormaPgto}</td>
+					<td>${c.Parcela}</td>
+					<td>${c.Fonte}</td>
+					<td>${new Date(c.Data).toLocaleDateString('pt-BR')}</td>
+					<td>${c.MesAno}</td>
+				</tr>
+			`;
+		});
 
-                html += `</tbody></table></div>`;
-            } else {
-                html += `<p>Não há compras neste período.</p>`;
-            }
 
-            document.getElementById('resumoResultado').innerHTML = html;
-
-        } catch (error) {
-            modal.hide();
-            alert("Erro ao conectar na API: " + error.message);
+            html += `</tbody></table></div>`;
+        } else {
+            html += `<p>Não há compras neste período.</p>`;
         }
+
+        document.getElementById('resumoResultado').innerHTML = html;
+
+    } catch (error) {
+        modal.hide();
+        showToast("Erro: " + error.message);
     }
+}
+
+	function atualizarCamposEntrada() {
+    const tipo = document.getElementById('entradaTipo').value;
+    const horasExtras = document.getElementById('entradaHorasExtras');
+    const horasUteis = document.getElementById('entradaHorasUteis');
+    const valorHora = document.getElementById('entradaValorHora');
+
+    if (tipo === 'Extra') {
+        horasExtras.disabled = false;
+        horasUteis.disabled = true;
+        valorHora.disabled = true;
+    } else {
+        horasExtras.disabled = true;
+        horasUteis.disabled = false;
+        valorHora.disabled = false;
+        horasExtras.value = '';
+    }
+}
 </script>
 
 </body>
