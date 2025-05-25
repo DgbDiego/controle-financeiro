@@ -351,27 +351,32 @@
     const modal = showLoading();
 
     try {
-        const res = await fetch(`${apiBase}/RegistrarEntrada`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
+    const res = await fetch(`${apiBase}/RegistrarEntrada`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
 
-        const text = await res.text();
-		const resultado = JSON.parse(text);
+    const text = await res.text();
+    const resultado = JSON.parse(text);
 
-		const textoFormatado = `
-		${resultado.message}
+    const valorHoraExtra = resultado.valorHoraExtra ?? 0;
+    const horasExtras = resultado.horasExtras ?? 0;
+    const valorExtraCalculado = resultado.valorExtraCalculado ?? 0;
+    const novosExtras = resultado.novosExtras ?? 0;
 
-		Valor da Hora Extra: R$ ${resultado.valorHoraExtra.toFixed(2).replace('.', ',')}
-		Horas Extras: ${resultado.horasExtras}
-		Valor Extra Calculado: R$ ${resultado.valorExtraCalculado.toFixed(2).replace('.', ',')}
-		Total de Extras: R$ ${resultado.novosExtras.toFixed(2).replace('.', ',')}
-		`;
+    const textoFormatado = `
+				${resultado.message}
 
-		document.getElementById('resultadoEntrada').innerText = textoFormatado.trim();
-        modal.hide();
-        showToast("Entrada registrada!");
+				Valor da Hora Extra: R$ ${valorHoraExtra.toFixed(2).replace('.', ',')}
+				Horas Extras: ${horasExtras}
+				Valor Extra Calculado: R$ ${valorExtraCalculado.toFixed(2).replace('.', ',')}
+				Total de Extras: R$ ${novosExtras.toFixed(2).replace('.', ',')}
+					`;
+
+	document.getElementById('resultadoEntrada').innerText = textoFormatado.trim();
+	modal.hide();
+	showToast("Entrada registrada!");
 
         // Limpar campos
         ['entradaPessoa', 'entradaValorHora', 'entradaHorasUteis', 'entradaMesAno', 'entradaHorasExtras']
